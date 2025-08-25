@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>靈獸按鈕</title>
+  <style>
+    :root {
+      --gap: 6px;
+      --radius: 10px;
+      --bg: #0b0f14;
+      --card: #121820;
+      --muted: #98a2b3;
+      --accent: #2dd4bf;
+      --page-width: 420px; 
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 8px; background: var(--bg); color: #e5e7eb;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, 'PingFang TC', 'Microsoft JhengHei', 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;
+      display: flex;
+      justify-content: center;
+    }
+    main {
+      width: 100%;
+      max-width: var(--page-width);
+    }
+    h1 { font-size: 16px; font-weight: 700; margin: 0 0 8px; }
+    .hint { color: var(--muted); font-size: 11px; margin-bottom: 10px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: auto;
+      gap: var(--gap);
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .cell {
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 80px;
+    }
+
+    .img-btn {
+      border: 0;
+      cursor: pointer;
+      padding: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+    }
+    .img-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .img-btn img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      aspect-ratio: 2/1;
+    }
+
+    .reset {
+      border: 0;
+      background: linear-gradient(180deg, #1f2937, #0f172a);
+      color: #e5e7eb;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      transition: transform .08s ease, box-shadow .2s ease;
+      padding: 8px;
+      font-size: 14px;
+    }
+    .reset:hover { box-shadow: 0 4px 12px rgba(45, 212, 191, .25) inset; }
+    .reset:active { transform: translateY(1px); }
+
+    .placeholder { opacity: .25; border: 1px dashed #334155; }
+
+    footer { max-width: 100%; margin: 8px auto 0; color: var(--muted); font-size: 10px; }
+    code { background: #0f172a; padding: 1px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="grid" id="grid">
+      <button class="cell img-btn" data-id="1" aria-pressed="false">
+        <img src="images/1.jpg" alt="Image 1">
+      </button>
+      <button class="cell img-btn" data-id="2" aria-pressed="false">
+        <img src="images/2.jpg" alt="Image 2" />
+      </button>
+      <button class="cell img-btn" data-id="3" aria-pressed="false">
+        <img src="images/3.jpg" alt="Image 3" />
+      </button>
+      <button class="cell img-btn" data-id="4" aria-pressed="false">
+        <img src="images/4.jpg" alt="Image 4" />
+      </button>
+      <button class="cell img-btn" data-id="5" aria-pressed="false">
+        <img src="images/5.jpg" alt="Image 5" />
+      </button>
+      <button class="cell img-btn" data-id="6" aria-pressed="false">
+        <img src="images/6.jpg" alt="Image 6" />
+      </button>
+      <button class="cell img-btn" data-id="7" aria-pressed="false">
+        <img src="images/7.jpg" alt="Image 7" />
+      </button>
+      <button class="cell img-btn" data-id="8" aria-pressed="false">
+        <img src="images/8.jpg" alt="Image 8" />
+      </button>
+      <button class="cell img-btn" data-id="9" aria-pressed="false">
+        <img src="images/9.jpg" alt="Image 9" />
+      </button>
+      <button class="cell img-btn" data-id="10" aria-pressed="false">
+        <img src="images/10.jpg" alt="Image 10" />
+      </button>
+
+      <button id="reset-btn" class="cell reset" title="重置所有圖片">重置</button>
+      <div class="cell placeholder" aria-hidden="true"></div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const TOTAL = 10;
+      const toggled = new Array(TOTAL + 1).fill(false);
+
+      function filename(idx) {
+        return toggled[idx] ? `images/${idx}_1.jpg` : `images/${idx}.jpg`;
+      }
+
+      document.querySelectorAll('.img-btn').forEach(btn => {
+        const id = Number(btn.dataset.id);
+        const img = btn.querySelector('img');
+        img.addEventListener('error', () => {
+          btn.setAttribute('aria-label', `找不到檔案 ${filename(id)}`);
+        });
+        btn.addEventListener('click', () => {
+          toggled[id] = !toggled[id];
+          btn.setAttribute('aria-pressed', String(toggled[id]));
+          img.src = filename(id);
+        });
+      });
+
+      const resetBtn = document.getElementById('reset-btn');
+      resetBtn.addEventListener('click', () => {
+        document.querySelectorAll('.img-btn').forEach(btn => {
+          const id = Number(btn.dataset.id);
+          const img = btn.querySelector('img');
+          toggled[id] = false;
+          btn.setAttribute('aria-pressed', 'false');
+          img.src = filename(id);
+        });
+      });
+
+      const preload = [];
+      for (let i = 1; i <= TOTAL; i++) {
+        const p = new Image();
+        p.src = `${i}_1.jpg`;
+        preload.push(p);
+      }
+    })();
+  </script>
+</body>
+</html>
